@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>hight_search.html</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="scripts/common/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$("#searchBtn").click(function(){
+				var title=$("#title").val().trim();
+				var status=$("#status option:checked").val().trim();
+				var begin=$("#begin").val().trim();
+				var end=$("#end").val().trim();
+				//alert(title+",,,"+status+",,,"+begin+",,,"+end);
+				
+				//判断日期是否符合要求
+				var p=/^(\d{4})\-(\d{2})\-(\d{2})$/;
+				if(!p.test(begin)&&begin!=""){
+					alert("日期输入格式不正确！");
+					return;
+				}
+				if(!p.test(end)&&end!=""){
+					alert("日期输入格式不正确！");
+					return;
+				}
+				$.ajax({
+					url:"http://localhost:8080/cloud_note/hightSearch.do",
+					type:"post",
+					dataType:"json",
+					data:{"title":title,"status":status,"begin":begin,"end":end},
+					success:function(result){
+						$("#noteul").empty();
+						var notes=result.data;
+						for(var i=0;i<notes.length;i++){
+							var str='<li>'+notes[i].cn_note_title+'</li>';
+							var $li=$(str);
+							$("#noteul").append($li);
+						}
+					}
+				});
+				
+			});
+		});
+	</script>
+  </head>
+  
+  <body>
+    标题:<input	type="text" id="title"/><br/>
+    状态: <select id="status">
+    	<option value="0">全部</option>
+    	<option value="1">正常</option>
+    	<option value="2">删除</option>
+    </select>  <br/>
+    开始日期:<input	type="text" id="begin"/><br/>
+    结束日期:<input	type="text" id="end"/><br/>
+    <button id="searchBtn" >搜索</button><hr/>
+    结果列表：<br/>
+    <ul id="noteul">
+    	
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhf.dao.NoteDao">
+	
+	<!-- 组合查询 -->
+	<select id="hightSearch" parameterType="map" resultType="com.zhf.entity.Note">
+		select * from cn_note 
+		<where>
+			<if test="title!=null">
+				cn_note_title like #{title}
+			</if>
+			<if test="status!=null">
+				and cn_note_status_id = #{status}
+			</if>
+			<if test="beginDate!=null">
+				and cn_note_create_time>= #{beginDate}
+			</if>
+			<if test="endDate!=null">
+				and cn_note_create_time&lt;= #{endDate}
+			</if>
+		</where>
+	</select>
+
+    <select id="findNoteByNotebookId"   parameterType="string" resultType="map">
+    	select cn_note_id,cn_note_title,cn_note_status_id from cn_note where cn_notebook_id=#{id}  order by cn_note_create_time desc
+    </select>
+    
+    <insert id="addNote" parameterType="com.zhf.entity.Note">
+    	insert into cn_note (cn_note_id,cn_notebook_id,cn_user_id,cn_note_status_id,cn_note_type_id,cn_note_title,cn_note_body,cn_note_create_time,cn_note_last_modify_time)
+    		values(#{cn_note_id},#{cn_notebook_id},#{cn_user_id},#{cn_note_status_id},#{cn_note_type_id},#{cn_note_title},#{cn_note_body},#{cn_note_create_time},#{cn_note_last_modify_time})
+    </insert>
+    
+    <select id="findNoteByNoteId" parameterType="string"	resultType="com.zhf.entity.Note">
+    	select * from cn_note where cn_note_id=#{noteId}
+    </select>
+    
+    <update id="updateNote" parameterType="com.zhf.entity.Note">
+    	update cn_note set cn_note_title=#{cn_note_title},cn_note_body=#{cn_note_body},cn_note_last_modify_time=#{cn_note_last_modify_time} where cn_note_id=#{cn_note_id}
+    </update>
+    
+    <update id="recoveryNote" parameterType="string">
+    	update cn_note set cn_note_status_id="2" where cn_note_id=#{noteId}
+    </update>
+    
+    <select id="seeRecoveryNote" resultType="com.zhf.entity.Note">
+    	select * from cn_note where cn_note_status_id="2"
+    </select>
+    
+    <select id="replayNote" parameterType="string">
+    	update cn_note set cn_note_status_id="1" where cn_note_id=#{noteId}
+    </select>
+    
+    <delete id="deleteNote" parameterType="string">
+    	delete from cn_note where cn_note_id=#{noteId}
+    </delete>
+</mapper>  

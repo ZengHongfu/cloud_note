@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhf.dao.AssociationDao">
+	<select id="findUser" parameterType="string" resultMap="map1">
+		select * from cn_user where cn_user_name=#{userName}
+	</select>
+	<resultMap type="com.zhf.entity.User" id="map1">
+		<!-- User 中的cn_user_name 等按照默认名称匹配-->
+		<!-- 定义关联属性books如何加载 -->
+		<collection property="books" javaType="java.util.List" ofType="NoteBook" select="findBooks" column="cn_user_id"></collection>
+	</resultMap>
+	 <select id="findBooks" parameterType="string" resultType="com.zhf.entity.NoteBook">
+	 	select * from cn_notebook where cn_user_id=#{userId}
+	 </select>
+	 
+	 
+	 <select id=""></select>
+</mapper>   
